@@ -1,0 +1,17 @@
+services:
+  apache-php:
+    build: Dockerfiles/php-apache/
+    env_file:
+      - .env
+    container_name: php-turnos
+    ports:
+      - ${PHP_PORT}:80
+    volumes:
+      - ./www:/var/www
+    networks:
+      - network1
+
+networks:
+  network1:
+    name: ${RED_NOW}
+    external: true
