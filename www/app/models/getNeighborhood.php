@@ -1,23 +1,20 @@
 <?php
 require_once 'connection.php';
 
-function obtenerBarrio($neighborhood){
-    $conecction = conectar();
+function obtenerBarrio(){
+$conecction = conectar();
     if ($conecction) {
         // Preparar la consulta SQL
-        $query = "SELECT name FROM neighborhood WHERE id = :barrio";
+        $query = "SELECT * FROM neighborhood";
         
         // Preparar la sentencia
         $stmt = $conecction->prepare($query);
-        
-        // Asignar valores a los parámetros
-        $stmt->bindParam(':barrio', $neighborhood);
         
         // Ejecutar la consulta
         $stmt->execute();
         
         // Obtener los resultados como un array asociativo
-        $resultados = $stmt->fetch(PDO::FETCH_ASSOC);
+        $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         // Cerrar la conexión
         cerrarConexion($conecction);

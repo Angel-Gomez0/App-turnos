@@ -1,11 +1,29 @@
 <?php
-require_once '../models/connection.php'; // Falta el punto y coma
+session_start();
+require_once '../models/connection.php';
+if (isset( $_SESSION)) {
+    if (( $_SESSION['rol']) == "" or  $_SESSION['rol'] != '2') {
+        // var_dump($_SESSION['rol']);
+        // exit;
+        // ob_start();
+        
+            echo '<script type="text/javascript">';
+            echo 'window.location.href="../login.php";';
+            echo '</script>';
+            exit();
+    } 
+    // else {
+    //     $useremail = $_SESSION["email"];
+    // }
+} else {
+        echo '<script type="text/javascript">';
+        echo 'window.location.href="../login.php";';
+        echo '</script>';
+        exit();
+}
 
-// Verificar si la solicitud es POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Conectamos a la base de datos
     $conexion = conectar();
-    // Obtener el ID enviado desde la solicitud POST
     $userId = $_POST['id'];
     
     if ($conexion) {
@@ -27,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Confirmar la transacción
                 $conexion->commit();
 
-                echo "Actualización exitosa en ambas tablas.";
+                echo "Actualización exitosa del usuario.";
             } else {
                 echo "ID de usuario no válido.";
             }

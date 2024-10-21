@@ -1,8 +1,22 @@
 <?php
 session_start();
-$_SESSION['user'];
-$_SESSION['rol'];
-var_dump($_SESSION);
+if (isset( $_SESSION)) {
+    if (( $_SESSION['rol']) == "" or  $_SESSION['rol'] != '1') {
+        // var_dump($_SESSION['rol']);
+        // exit;
+        // ob_start();
+        
+            echo '<script type="text/javascript">';
+            echo 'window.location.href="../login.php";';
+            echo '</script>';
+            exit();
+    } 
+} else {
+        echo '<script type="text/javascript">';
+        echo 'window.location.href="../login.php";';
+        echo '</script>';
+        exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -96,7 +110,6 @@ var_dump($_SESSION);
             </div>
             
             <?php include('../include/footer.php'); ?>
-            
             <?php include('../include/setting.php'); ?>
         </div>
         <?php include('../include/script.php'); ?> 

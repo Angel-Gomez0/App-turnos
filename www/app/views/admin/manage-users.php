@@ -1,24 +1,27 @@
 <?php
+session_start();
 include '../../models/connection.php';
-include '../../controllers/login.php';
 require_once '../../models/getContacts.php';
 require_once '../../models/getAddress.php';
 require_once '../../models/getPersons.php';
 require_once '../../models/getNeighborhood.php';
 
-if (!isset($_SESSION)) {
-    echo "redireccionando";
-    echo '<script type="text/javascript">';
-    echo 'window.location.href="../login.php";';
-    echo '</script>';
-    exit();
-}
-//var_dump($_SESSION);
-if (empty($_SESSION)) {
-    echo '<script type="text/javascript">';
-    echo 'window.location.href="../login.php";';
-    echo '</script>';
-    exit();
+if (isset( $_SESSION)) {
+    if (( $_SESSION['rol']) == "" or  $_SESSION['rol'] != '2') {
+        // var_dump($_SESSION['rol']);
+        // exit;
+        // ob_start();
+        
+            echo '<script type="text/javascript">';
+            echo 'window.location.href="../login.php";';
+            echo '</script>';
+            exit();
+    } 
+} else {
+        echo '<script type="text/javascript">';
+        echo 'window.location.href="../login.php";';
+        echo '</script>';
+        exit();
 }
 
 $contactos = obtenerContactos();
@@ -63,11 +66,11 @@ $personas= obtenerPersonas();
                                                 <th class="center">Nombre</th>
                                                 <th class="center">Apellido</th>
                                                 <th class="center">Contacto</th>
-                                                <th class="center">Calle</th>
+                                                <!-- <th class="center">Calle</th>
                                                 <th class="center">Número</th>
                                                 <th class="center">Departamento</th>
                                                 <th class="center">Piso</th>
-                                                <th class="center">Barrio</th>
+                                                <th class="center">Barrio</th> -->
                                                 <th class="center">D.N.I</th>
                                                 <th class="center">Fecha de Nacimiento</th>
                                                 <th class="center">Estado</th>
@@ -76,9 +79,12 @@ $personas= obtenerPersonas();
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $person = ObtenerPersonas();
-                                            foreach ($person as $row) {
+                                            foreach ($personas as $row) {
+                                                if($row['status'] == 0){
+                                                    continue; // evitamos mostrar los doctores borrados
+                                                }
                                             ?>
+                                            
                                                 <tr class="center">
                                                     <td class="hidden-xs"><?php echo $row['name']; ?></td>
                                                     <td class="hidden-xs"><?php echo $row['surname']; ?></td>
@@ -89,7 +95,7 @@ $personas= obtenerPersonas();
                                                         }
                                                     }
                                                     ?></td>
-                                                    <td class="hidden-xs"><?php
+                                                    <!-- <td class="hidden-xs"><?php
                                                         foreach($address as $domicilio){
                                                             if($domicilio['id_person'] == $row['id']){
                                                                 echo $domicilio['street'];
@@ -124,14 +130,22 @@ $personas= obtenerPersonas();
                                                                 echo $barrio['name'];
                                                             }
                                                         }
-                                                    ?></td>
+                                                    ?></td> -->
                                                     <td class="hidden-xs"><?php echo $row['dni']; ?></td>
-                                                    <td class="hidden-xs"><?php echo $row['birth_date']; ?></td>
-                                                    <td class="hidden-xs"><?php
-                                                        echo $row['status'];
-                                                    ?></td>
+                                                    <td class="hidden-xs"><?php echo date('d/m/Y', strtotime($row['birth_date'])); ?></td>
                                                     <td class="hidden-xs">
-                                                        <button type="button" class="btn-activate" data-id="<?php echo $row['id']; ?>">Activar usuario</button>
+                                                    <?php
+                                                        if($row['status'] == 1){
+                                                            echo 'Activo';
+                                                        }
+                                                        else{
+                                                            echo 'Inactivo';
+                                                        }
+                                                    ?>
+                                                    </td>
+                                                    <td class="hidden-xs">
+                                                        <button type="button" class="btn-activate" data-id="<?php echo $row['id']; ?>">Activar paciente</button>
+                                                        <button type="button" class="btn-delete" data-id="<?php echo $row['id']; ?>">Borrar paciente</button>
                                                     </td>
                                                 </tr>
                                             <?php
@@ -145,12 +159,15 @@ $personas= obtenerPersonas();
                     </div>
                 </div>
             </div>
+            <?php include('../include/footer.php'); ?>
+            <?php include('../include/setting.php'); ?>
         </div>
 
-        <?php include('../include/footer.php'); ?>
-        <?php include('../include/setting.php'); ?>
+
         
         <?php include('../include/script.php'); ?> 
         <script src="../../../assets/js/activeUser.js"></script>
+        <script src="../../../assets/js/deleteUser.js"></script>
+        
     </body>
 </html>
